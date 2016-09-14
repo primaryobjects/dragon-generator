@@ -2,6 +2,7 @@
   "name": "dragons",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://primaryobjects.github.io/dragons",
   "devDependencies": {
     "react-scripts": "0.4.1"
   },
