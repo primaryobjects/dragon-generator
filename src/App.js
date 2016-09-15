@@ -8,7 +8,7 @@ class App extends Component {
 
     this.state = {
       name: '',
-      breath: 'Fire',
+      breath: {},
       result: '',
       breaths: []
     };
@@ -27,7 +27,8 @@ class App extends Component {
       url: 'https://gist.githubusercontent.com/primaryobjects/afac150f9756be774c42cdcd627ef2de/raw/7abe3bcacef0fc27a4e32dd0e128a972d597cb45/dragon-breath.json'
     }, function (err, data) {
       if (!err) {
-        self.setState({ breaths: JSON.parse(data.body) });
+        var breaths = JSON.parse(data.body);
+        self.setState({ breaths: breaths, breath: breaths[0] });
       }
       else {
         console.log('Error loading dragon breath types. ' + err);
@@ -42,14 +43,19 @@ class App extends Component {
   };
 
   onBreathChange(e) {
-    this.setState({ breath: e.target.value }, function() {
+    // Locate the breath from our array, using the selected type from the dropdown (e.target.value).
+    var breath = this.state.breaths.filter(function(breath) {
+      return (breath.type === e.target.value);
+    })[0];
+
+    this.setState({ breath: breath }, function() {
       this.buildResult();
     });
   };
 
   buildResult() {
-    if (this.state.name && this.state.breath) {
-      this.setState({ result: 'The fearsome dragon, ' + this.state.name + ' opens his jaw and breaths ' + this.state.breath + ' at you!' });
+    if (this.state.name && this.state.breath.type) {
+      this.setState({ result: 'The fearsome dragon, ' + this.state.name + ' opens his jaw and breaths ' + this.state.breath.type + ' at you!' });
     }
   };
 
@@ -67,7 +73,7 @@ class App extends Component {
             <input type="text" className="form-control" id="name" placeholder="Dragon name" value={ this.state.name } onChange={this.onNameChange} />
           </div>
           <div className="form-group">
-            <select id="breath" className="form-control" value={ this.state.breath } onChange={this.onBreathChange} >
+            <select id="breath" className="form-control" value={ this.state.breaths.type } onChange={this.onBreathChange} >
               {
                 this.state.breaths.map(function(breath, i) { 
                   return <option key={i}>{breath.type}</option>
@@ -81,19 +87,7 @@ class App extends Component {
           </div>
         </form>
         <div id="output" className={this.state.result ? '' : 'hidden'}>
-          <i className={'fa ' + (() => {
-            switch(this.state.breath) {
-              case 'Fire': return 'fa-fire';
-              case 'Lightning': return 'fa-bolt';
-              case 'Poison': return 'fa-flask';
-              case 'Water': return 'fa-tint';
-              case 'Ice': return 'fa-cubes';
-              case 'Undead': return 'fa-blind';
-              case 'Death': return 'fa-hotel';
-              case 'Love': return 'fa-heart';
-              default: return 'fa-crosshairs';
-            }
-          })()}></i>
+          <i className={'fa ' + this.state.breath.icon}></i>
           { this.state.result }
         </div>
       </div>
