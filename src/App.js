@@ -60,8 +60,10 @@ class App extends Component {
   };
 
   click(e) {
-    this.buildResult();
-    e.preventDefault();
+    if (this.state.name) {
+      this.buildResult();
+      e.preventDefault();
+    }
   };
 
   render() {
@@ -70,7 +72,7 @@ class App extends Component {
         <form>
           <div className="form-group">
             <label htmlFor="name">Dragon Name</label>
-            <input type="text" className="form-control" id="name" placeholder="Dragon name" value={ this.state.name } onChange={this.onNameChange} />
+            <input type="text" className="form-control" id="name" required placeholder="Dragon name" value={ this.state.name } onChange={this.onNameChange} />
           </div>
           <div className="form-group">
             <select id="breath" className="form-control" value={ this.state.breaths.type } onChange={this.onBreathChange} >
